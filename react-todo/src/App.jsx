@@ -41,8 +41,8 @@ const App = () => {
         throw new Error('Failed to add task');
       }
 
-      const data = await res.json();
-      setTasks(prevTasks => [...prevTasks, data]);
+      fetchTask(); // Refresh tasks after adding a new one
+      
     } catch (err) {
       setError(err.message);
     } finally {
@@ -61,7 +61,8 @@ const App = () => {
         throw new Error('Failed to delete task');
       }
 
-      setTasks(prevTasks => prevTasks.filter((task) => task.id !== id));
+      fetchTask(); // Refresh tasks after deletion
+      
     } catch (err) {
       setError(err.message);
     } finally {
@@ -87,9 +88,8 @@ const App = () => {
         throw new Error('Failed to update task');
       }
 
-      setTasks(prevTasks =>
-        prevTasks.map((el) => (el.id === id ? updatedTask : el))
-      );
+      fetchTask(); // Refresh tasks after updating
+      
     } catch (err) {
       setError(err.message);
     } finally {
