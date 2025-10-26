@@ -3,21 +3,11 @@ import printJS from "print-js";
 import React from "react";
 import { useParams } from "react-router-dom";
 import useSWR from "swr";
-import useCookie from "react-use-cookie";
 
+const fetcher = (url) => fetch(url).then((res) => res.json());
 
 const VoucherCard = () => {
-
-  const [token] = useCookie("my_token");
-
   const { id } = useParams();
-
-  const fetcher = (url) =>
-    fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((res) => res.json());
 
   const { data, isLoading, error } = useSWR(
     import.meta.env.VITE_API_URL + "/vouchers/" + id,
@@ -25,10 +15,11 @@ const VoucherCard = () => {
   );
 
   const handlePrint = () => {
-
+    // window.print();
     printJS({
       printable: "printArea",
       type: "html",
+      //   header: "INVOICE",
       scanStyles: true,
       css: [
         "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css",
@@ -40,6 +31,7 @@ const VoucherCard = () => {
     console.log("export pdf");
     const element = document.getElementById("printArea");
 
+    // Options for PDF generation
     const opt = {
       margin: 0.1,
       filename: "invoice.pdf",
@@ -48,6 +40,7 @@ const VoucherCard = () => {
       jsPDF: { unit: 'in', format: 'a5', orientation: 'portrait' },
     };
 
+    // Convert the element to PDF
     html2pdf().from(element).set(opt).save();
   };
 
@@ -61,12 +54,12 @@ const VoucherCard = () => {
         <div className="flex justify-between items-start mb-8">
           <div>
             <h1 className="text-4xl font-bold mb-2">INVOICE</h1>
-            <p className="text-xl">{data.data.voucher_id}</p>
+            <p className="text-xl">{data.voucher_id}</p>
           </div>
           <div className="text-right">
             <p className="font-bold">Invoice to</p>
-            <p>{data.data.customer_name}</p>
-            <p>Date: {data.data.sale_date}</p>
+            <p>{data.customer_name}</p>
+            <p>Date: {data.sale_date}</p>
           </div>
         </div>
 
@@ -81,7 +74,7 @@ const VoucherCard = () => {
             </tr>
           </thead>
           <tbody>
-            {data.data.records.map((record, index) => (
+            {data.records.map((record, index) => (
               <tr key={record.id} className="border-b border-gray-200">
                 <td className="py-2 text-sm">{index + 1}</td>
                 <td className="py-2 text-sm">{record.product.product_name}</td>
@@ -98,19 +91,19 @@ const VoucherCard = () => {
               <td className="py-2 text-right text-sm" colSpan={4}>
                 Total
               </td>
-              <td className="py-2 text-right text-sm">{parseFloat(data.data.total).toFixed(2)}</td>
+              <td className="py-2 text-right text-sm">{data.total.toFixed(2)}</td>
             </tr>
             <tr className="border-b border-gray-200">
               <td className="py-2 text-right text-sm" colSpan={4}>
                 Tax
               </td>
-              <td className="py-2 text-right text-sm">{parseFloat(data.data.tax).toFixed(2)}</td>
+              <td className="py-2 text-right text-sm">{data.tax.toFixed(2)}</td>
             </tr>
             <tr className="border-b border-gray-200">
               <td className="py-2 text-right text-sm" colSpan={4}>
                 Net Total
               </td>
-              <td className="py-2 text-right text-sm">{parseFloat(data.data.netTotal).toFixed(2)}</td>
+              <td className="py-2 text-right text-sm">{data.netTotal.toFixed(2)}</td>
             </tr>
           </tfoot>
         </table>

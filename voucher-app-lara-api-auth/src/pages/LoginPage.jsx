@@ -17,7 +17,6 @@ function LoginPage() {
   const [userCookie, setUserCookie] = useCookie("user");
 
   const handleLogin = async (data) => {
-    console.log(data);
 
     const res = await fetch(import.meta.env.VITE_API_URL + "/login", {
       method: "POST",

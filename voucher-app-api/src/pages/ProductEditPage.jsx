@@ -9,7 +9,7 @@ const ProductEditPage = () => {
       <Container>
         <Breadcrumb
           currentPageTitle={"Edit Product"}
-          links={[{ title: "Product Module", path: "/dashboard/product" }]}
+          links={[{ title: "Product Module", path: "/product" }]}
         />
         <ProductEditCard />
       </Container>

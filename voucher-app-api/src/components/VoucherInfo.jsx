@@ -7,12 +7,10 @@ import SaleForm from "./SaleForm";
 import VoucherTable from "./VoucherTable";
 import useRecordStore from "../stores/useRecordStore";
 import { useNavigate } from "react-router-dom";
-import useCookie from "react-use-cookie";
 
 tailspin.register();
 
 const VoucherInfo = () => {
-  const [token] = useCookie("my_token");
   const {
     register,
     handleSubmit,
@@ -31,48 +29,49 @@ const VoucherInfo = () => {
 
     const total = records.reduce((a, b) => a + b.cost, 0);
     const tax = total * 0.07;
-    const net_total = total + tax;
+    const netTotal = total + tax;
 
-    const currentVoucher = { ...data, records, total, tax, net_total };
+    const currentVoucher = { ...data, records, total, tax, netTotal };
+
+    console.log(data);
 
     const res = await fetch(import.meta.env.VITE_API_URL + "/vouchers", {
       method: "POST",
       body: JSON.stringify(currentVoucher),
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
       },
     });
 
-
     const json = await res.json();
 
-    if (res.status === 201) {
-      toast.success("Voucher created successfully");
+    console.log(json);
 
-      resetRecord();
+    toast.success("Voucher created successfully");
 
-      reset();
+    resetRecord();
 
-      setIsSending(false);
+    reset();
 
-      if (data.redirect_to_detail) {
-        navigate(`/dashboard/voucher/detail/${json.data.id}`);
-      }
-    } else {
-      toast.error(json.message);
+    setIsSending(false);
+
+    if (data.redirect_to_detail) {
+      navigate(`/voucher/detail/${json.id}`);
     }
   };
 
+  // Utility function to generate a unique invoice number
   function generateInvoiceNumber() {
-
+    // Get the current date
     const date = new Date();
 
+    // Format the date as YYYYMMDD
     const formattedDate = date.toISOString().slice(0, 10).replace(/-/g, "");
 
+    // Generate a random number between 1000 and 9999
     const randomNumber = Math.floor(1000 + Math.random() * 9000);
 
+    // Combine the formatted date and the random number
     const invoiceNumber = `INV-${formattedDate}-${randomNumber}`;
 
     return invoiceNumber;
@@ -95,8 +94,9 @@ const VoucherInfo = () => {
             <div className=" col-span-1">
               <div className="">
                 <label
-                  className={`block mb-2 text-sm font-medium ${errors.voucher_id ? "text-red-500" : "text-gray-900"
-                    } dark:text-white`}
+                  className={`block mb-2 text-sm font-medium ${
+                    errors.voucher_id ? "text-red-500" : "text-gray-900"
+                  } dark:text-white`}
                 >
                   Voucher ID
                 </label>
@@ -106,10 +106,11 @@ const VoucherInfo = () => {
                   {...register("voucher_id", {
                     required: true,
                   })}
-                  className={`bg-gray-50 border ${errors.voucher_id
+                  className={`bg-gray-50 border ${
+                    errors.voucher_id
                       ? "border-red-500 focus:ring-red-500 focus:border-red-500"
                       : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                    } text-gray-900 text-sm rounded-lg  block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
+                  } text-gray-900 text-sm rounded-lg  block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
                 />
                 {errors.voucher_id?.type === "required" && (
                   <p className=" text-red-500 text-sm mt-1">
@@ -121,8 +122,9 @@ const VoucherInfo = () => {
             <div className=" col-span-1">
               <div className="">
                 <label
-                  className={`block mb-2 text-sm font-medium ${errors.customer_name ? "text-red-500" : "text-gray-900"
-                    } dark:text-white`}
+                  className={`block mb-2 text-sm font-medium ${
+                    errors.customer_name ? "text-red-500" : "text-gray-900"
+                  } dark:text-white`}
                 >
                   Customer Name
                 </label>
@@ -131,10 +133,11 @@ const VoucherInfo = () => {
                   {...register("customer_name", {
                     required: true,
                   })}
-                  className={`bg-gray-50 border ${errors.customer_name
+                  className={`bg-gray-50 border ${
+                    errors.customer_name
                       ? "border-red-500 focus:ring-red-500 focus:border-red-500"
                       : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                    } text-gray-900 text-sm rounded-lg  block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
+                  } text-gray-900 text-sm rounded-lg  block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
                 />
                 {errors.customer_name?.type === "required" && (
                   <p className=" text-red-500 text-sm mt-1">
@@ -146,8 +149,9 @@ const VoucherInfo = () => {
             <div className=" col-span-1">
               <div className="">
                 <label
-                  className={`block mb-2 text-sm font-medium ${errors.customer_email ? "text-red-500" : "text-gray-900"
-                    } dark:text-white`}
+                  className={`block mb-2 text-sm font-medium ${
+                    errors.customer_email ? "text-red-500" : "text-gray-900"
+                  } dark:text-white`}
                 >
                   Customer Email
                 </label>
@@ -156,10 +160,11 @@ const VoucherInfo = () => {
                   {...register("customer_email", {
                     required: true,
                   })}
-                  className={`bg-gray-50 border ${errors.customer_email
+                  className={`bg-gray-50 border ${
+                    errors.customer_email
                       ? "border-red-500 focus:ring-red-500 focus:border-red-500"
                       : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                    } text-gray-900 text-sm rounded-lg  block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
+                  } text-gray-900 text-sm rounded-lg  block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
                 />
                 {errors.customer_email?.type === "required" && (
                   <p className=" text-red-500 text-sm mt-1">
@@ -171,8 +176,9 @@ const VoucherInfo = () => {
             <div className=" col-span-1">
               <div className="">
                 <label
-                  className={`block mb-2 text-sm font-medium ${errors.sale_date ? "text-red-500" : "text-gray-900"
-                    } dark:text-white`}
+                  className={`block mb-2 text-sm font-medium ${
+                    errors.sale_date ? "text-red-500" : "text-gray-900"
+                  } dark:text-white`}
                 >
                   Sale Date
                 </label>
@@ -183,10 +189,11 @@ const VoucherInfo = () => {
                   {...register("sale_date", {
                     required: true,
                   })}
-                  className={`bg-gray-50 border ${errors.sale_date
+                  className={`bg-gray-50 border ${
+                    errors.sale_date
                       ? "border-red-500 focus:ring-red-500 focus:border-red-500"
                       : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                    } text-gray-900 text-sm rounded-lg  block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
+                  } text-gray-900 text-sm rounded-lg  block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
                 />
                 {errors.sale_date?.type === "required" && (
                   <p className=" text-red-500 text-sm mt-1">
@@ -206,6 +213,7 @@ const VoucherInfo = () => {
               </label>
               <input
                 {...register("redirect_to_detail")}
+                required
                 form="infoForm"
                 id="redirect_to_detail"
                 type="checkbox"

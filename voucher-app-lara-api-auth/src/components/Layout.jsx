@@ -20,7 +20,7 @@ const Layout = () => {
   }
 
   return (
-    <main className=" flex flex-col min-h-screen p-5">
+    <main className="">
       <Header />
       <Outlet />
       <Toaster position="top-right" />

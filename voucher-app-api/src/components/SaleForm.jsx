@@ -2,24 +2,11 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
 import useRecordStore from "../stores/useRecordStore";
-import useCookie from "react-use-cookie";
 
+const fetcher = (url) => fetch(url).then((res) => res.json());
 const SaleForm = () => {
-  
-    const [token] = useCookie("my_token");
-
-    const fetcher = async (url) => {
-      const res = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return res.json();
-    }
-
-
   const { data, isLoading, error } = useSWR(
-    import.meta.env.VITE_API_URL + "/products?limit=100",
+    import.meta.env.VITE_API_URL + "/products",
     fetcher
   );
 
@@ -35,27 +22,28 @@ const SaleForm = () => {
       ({ product: { id } }) => currentProductId === id
     );
 
+    // console.log(isExited);
 
-    if (isExited) {
-      changeQuantity(isExited.product_id, data.quantity);
-    } else {
-      addRecord({
-        product: currentProduct,
-        product_id: currentProduct.id,
-        quantity: data.quantity,
-        cost: currentProduct.price * data.quantity,
-        created_at: new Date().toISOString(),
-      });
+    if(isExited) {
+
+        changeQuantity( isExited.id, data.quantity);
+
+    }else{
+
+        addRecord({
+            id: Date.now(),
+            product: currentProduct,
+            quantity: data.quantity,
+            cost: currentProduct.price * data.quantity,
+            created_at: new Date().toISOString(),
+          });
+
     }
+
+   
 
     reset();
   };
-
-
-  if (error) return <div>Failed to load</div>;
-  if (isLoading) return <div>Loading...</div>;  
-
-
   return (
     <div className=" bg-white p-5 rounded-lg border mb-5">
       <form action="#" id="recordForm" onSubmit={handleSubmit(onSubmit)}>
@@ -75,7 +63,7 @@ const SaleForm = () => {
             >
               <option value="">Select a product</option>
               {!isLoading &&
-                data.data.map((product) => (
+                data.map((product) => (
                   <option key={product.id} value={JSON.stringify(product)}>
                     {product.product_name}
                   </option>

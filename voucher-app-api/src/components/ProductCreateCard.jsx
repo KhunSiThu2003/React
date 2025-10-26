@@ -1,18 +1,15 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+
 import { tailspin } from "ldrs";
 import toast from "react-hot-toast";
-import useCookie from "react-use-cookie";
 
 tailspin.register();
 
 // Default values shown
 
 const ProductCreateCard = () => {
-
-  const [token] = useCookie("my_token");
-
   const {
     register,
     handleSubmit,
@@ -37,13 +34,12 @@ const ProductCreateCard = () => {
       }),
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
     });
     setIsSending(false);
     reset();
     if (data.back_to_product_list) {
-      navigate("/dashboard/product");
+      navigate("/product");
     }
     toast.success("Product create successfully");
   };
@@ -169,7 +165,7 @@ const ProductCreateCard = () => {
         </div>
 
         <Link
-          to="/dashboard/product"
+          to="/product"
           className="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
         >
           Cancel

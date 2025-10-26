@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { HiSearch } from "react-icons/hi";
 import {
   HiMiniTrash,
@@ -7,22 +7,43 @@ import {
   HiPlus,
   HiTrash,
 } from "react-icons/hi2";
-
 import useSWR from "swr";
 import ProductListSkeletonLoader from "./ProductListSkeletonLoader";
 import ProductListEmptyStage from "./ProductListEmptyStage";
 import ProductRow from "./ProductRow";
 import { Link } from "react-router-dom";
-
-const fetcher = (url) => fetch(url).then((res) => res.json());
+import { debounce } from "lodash";
+import Pagination from "./Pagination";
+import useCookie from "react-use-cookie";
 
 const ProductList = () => {
-  const { data, isLoading, error } = useSWR(
-    import.meta.env.VITE_API_URL + "/products",
-    fetcher
+  // const [search, setSearch] = useState("");
+
+  const [token] = useCookie("my_token");
+
+  const [fetchUrl, setFetchUrl] = useState(
+    import.meta.env.VITE_API_URL + "/products"
   );
 
-  // if(isLoading) return <p>Loading...</p>;
+  const fetcher = (url) =>
+    fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((res) => res.json());
+
+  const { data, isLoading, error } = useSWR(fetchUrl, fetcher);
+
+  const handleSearchInput = debounce((e) => {
+    console.log(e.target.value);
+    // setSearch(e.target.value);
+    setFetchUrl(`${import.meta.env.VITE_API_URL}/products?q=${e.target.value}`);
+  }, 500);
+
+  const updateFetchUrl = (url) => {
+    setFetchUrl(url);
+  };
+
 
   return (
     <div>
@@ -36,17 +57,22 @@ const ProductList = () => {
               type="text"
               className="bg-gray-50 border border-gray-300 text-stone-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Search Product"
+              // value={search}
+              onChange={handleSearchInput}
             />
           </div>
         </div>
         <div className="">
-          <Link to="/product/create" className="text-white flex justify-center items-center gap-3 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          <Link
+            to="/product/create"
+            className="text-white flex justify-center items-center gap-3 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          >
             Add new Product
             <HiPlus />
           </Link>
         </div>
       </div>
-      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <div className="relative overflow-x-auto shadow-md sm:rounded-lg mb-5">
         <table className="w-full text-sm text-left rtl:text-right text-stone-500 dark:text-stone-400">
           <thead className="text-xs text-stone-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-stone-400">
             <tr>
@@ -64,6 +90,9 @@ const ProductList = () => {
                 Created At
               </th>
               <th scope="col" className="px-6 py-3 text-end">
+                Updated At
+              </th>
+              <th scope="col" className="px-6 py-3 text-end">
                 Action
               </th>
             </tr>
@@ -71,16 +100,23 @@ const ProductList = () => {
           <tbody>
             {isLoading ? (
               <ProductListSkeletonLoader />
-            ) : data.length === 0 ? (
+            ) : data?.data?.length === 0 ? (
               <ProductListEmptyStage />
             ) : (
-              data.map((product) => (
+              data?.data?.map((product) => (
                 <ProductRow product={product} key={product.id} />
               ))
             )}
           </tbody>
         </table>
       </div>
+      {!isLoading && (
+        <Pagination
+          links={data?.links}
+          meta={data?.meta}
+          updateFetchUrl={updateFetchUrl}
+        />
+      )}
     </div>
   );
 };

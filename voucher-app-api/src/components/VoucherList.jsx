@@ -12,46 +12,39 @@ import { Link } from "react-router-dom";
 import VoucherListRow from "./VoucherListRow";
 import useSWR from "swr";
 import { debounce, throttle } from "lodash";
-import Pagination from "./Pagination";
-import useCookie from "react-use-cookie";
 
+const fetcher = (url) => fetch(url).then((res) => res.json());
 
 const VoucherList = () => {
-
-  const [fetchUrl, setFetchUrl] = useState(
-    import.meta.env.VITE_API_URL + "/vouchers"
-  );
-
-  const [token] = useCookie("my_token");
+  const [search, setSearch] = useState("");
 
   const searchInput = useRef("");
+  console.log(searchInput);
+  // console.log(search);
 
-  const fetcher = (url) =>
-    fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((res) => res.json());
+  const { data, isLoading, error } = useSWR(
+    search
+      ? `${import.meta.env.VITE_API_URL}/vouchers?voucher_id_like=${search}`
+      : `${import.meta.env.VITE_API_URL}/vouchers`,
+    fetcher
+  );
 
-  const { data, isLoading, error } = useSWR(fetchUrl, fetcher);
+  // throttling 500 & debouncing - 500
+
+  // const handleSearch = (e) => {
+  //   // setSearch(e.target.value);
+  //   console.log(e.target.value);
+  // };
 
   const handleSearch = debounce((e) => {
     console.log(e.target.value);
-    setFetchUrl(`${import.meta.env.VITE_API_URL}/vouchers?q=${e.target.value}`);
+    setSearch(e.target.value);
   }, 500);
 
   const handleClearSearch = () => {
     setSearch("");
     searchInput.current.value = "";
   };
-
-  const updateFetchUrl = (url) => {
-    setFetchUrl(url);
-  };
-
-  if (isLoading) return <p>Loading...</p>;
-
-  console.log(data);
 
   return (
     <div>
@@ -68,7 +61,17 @@ const VoucherList = () => {
               className="bg-gray-50 border border-gray-300 text-stone-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Search Voucher"
             />
-           
+            {search && (
+              <button
+                className=" absolute right-2 top-0 bottom-0 m-auto"
+                onClick={handleClearSearch}
+              >
+                <HiX
+                  fill="red"
+                  className="scale-100 active:scale-90 duration-200"
+                />
+              </button>
+            )}
           </div>
         </div>
         <div className="">
@@ -116,20 +119,13 @@ const VoucherList = () => {
                 </td>
               </tr>
             ) : (
-              data?.data?.map((voucher, index) => (
-                <VoucherListRow key={voucher.id} voucher={voucher} />
+              data?.map((voucher, index) => (
+                <VoucherListRow key={index} voucher={voucher} />
               ))
             )}
           </tbody>
         </table>
       </div>
-      {!isLoading && (
-        <Pagination
-          links={data?.links}
-          meta={data?.meta}
-          updateFetchUrl={updateFetchUrl}
-        />
-      )}
     </div>
   );
 };

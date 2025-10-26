@@ -9,7 +9,7 @@ const VoucherDetailPage = () => {
       <Container>
         <Breadcrumb
           currentPageTitle={"Voucher Detail"}
-          links={[{ title: "Voucher Module", path: "/dashboard/voucher" }]}
+          links={[{ title: "Voucher Module", path: "/voucher" }]}
         />
         <VoucherCard />
       </Container>

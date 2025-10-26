@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
+
 import { tailspin } from "ldrs";
 import toast from "react-hot-toast";
 import useSWR from "swr";
-import useCookie from "react-use-cookie";
 
 tailspin.register();
 
+// Default values shown
 
+const fetcher = (url) => fetch(url).then((res) => res.json());
 
 const ProductEditCard = () => {
-  const [token] = useCookie("my_token");
   const {
     register,
     handleSubmit,
@@ -20,13 +21,6 @@ const ProductEditCard = () => {
   } = useForm();
 
   const { id } = useParams();
-
-  const fetcher = (url) =>
-  fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }).then((res) => res.json());
 
   const { data, isLoading, error } = useSWR(
     import.meta.env.VITE_API_URL + `/products/${id}`,
@@ -37,7 +31,7 @@ const ProductEditCard = () => {
 
   const navigate = useNavigate();
 
-  const handleUpdateProduct = async (data) => {
+  const handleCreateProduct = async (data) => {
     // console.log(data);
     setIsSending(true);
 
@@ -50,18 +44,14 @@ const ProductEditCard = () => {
       }),
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
     });
     setIsSending(false);
     if (data.back_to_product_list) {
-      navigate("/dashboard/product");
+      navigate("/product");
     }
     toast.success("Product update successfully");
   };
-
-  if (isLoading) return <p>Loading...</p>;
-
 
   return (
     <div className="  rounded-lg w-full md:w-1/2">
@@ -126,7 +116,7 @@ const ProductEditCard = () => {
           </div>
         </div>
       ) : (
-        <form onSubmit={handleSubmit(handleUpdateProduct)}>
+        <form onSubmit={handleSubmit(handleCreateProduct)}>
           <div className=" mb-5">
             <label
               htmlFor="first_name"
@@ -143,7 +133,7 @@ const ProductEditCard = () => {
                 minLength: 3,
                 maxLength: 30,
               })}
-              defaultValue={data?.data?.product_name}
+              defaultValue={data.product_name}
               className={`bg-gray-50 border ${
                 errors.product_name
                   ? "border-red-500 focus:ring-red-500 focus:border-red-500"
@@ -183,7 +173,7 @@ const ProductEditCard = () => {
                 min: 100,
                 max: 10000,
               })}
-              defaultValue={data?.data?.price}
+              defaultValue={data.price}
               className={`bg-gray-50 border ${
                 errors.price
                   ? "border-red-500 focus:ring-red-500 focus:border-red-500"
@@ -243,7 +233,7 @@ const ProductEditCard = () => {
           </div>
 
           <Link
-            to="/dashboard/product"
+            to="/product"
             className="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
           >
             Cancel
