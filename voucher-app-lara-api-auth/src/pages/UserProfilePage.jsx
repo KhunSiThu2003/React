@@ -1,80 +1,80 @@
 import React from "react";
-import useCookie from "react-use-cookie";
 import Container from "../components/Container";
 import Breadcrumb from "../components/Breadcrumb";
-import {
-  HiEnvelope,
-  HiLockOpen,
-  HiPencil,
-  HiPencilSquare,
-  HiUser,
-} from "react-icons/hi2";
+import { HiLockOpen, HiPencilSquare } from "react-icons/hi2";
 import { Link } from "react-router-dom";
 import useUserStore from "../stores/useUserStore";
 
 const UserProfilePage = () => {
-  //   const [user] = useCookie("user");
-  //   const { name, email, profile_image } = JSON.parse(user);
-
   const {
     user: { name, email, profile_image },
   } = useUserStore();
 
   return (
-    <section>
+    <section className="min-h-screen bg-gray-50 py-10">
       <Container>
         <Breadcrumb currentPageTitle={"User Profile"} />
 
-        <div className="border p-10 flex gap-5 flex-col">
-          <div className="flex items-end space-x-4">
-            <div className=" relative">
+        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-md p-8 space-y-8 border border-gray-100">
+          {/* Profile Header */}
+          <div className="flex flex-col sm:flex-row sm:items-end gap-6 border-b pb-6">
+            <div className="relative">
               <img
-                className=" size-32 rounded-lg"
+                className="size-32 rounded-xl border-4 border-gray-200 shadow-sm object-cover"
                 src={
                   profile_image
                     ? profile_image
-                    : "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+                    : "https://static.vecteezy.com/system/resources/previews/020/911/740/non_2x/user-profile-icon-profile-avatar-user-icon-male-icon-face-icon-profile-icon-free-png.png"
                 }
-                alt="user photo"
+                alt="user"
               />
 
               <Link
                 to={"user-change-image"}
-                className=" absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 size-6 flex justify-center items-center rounded-full bg-blue-600 text-white hover:bg-blue-200"
+                className="absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 shadow-md transition"
               >
-                <HiPencilSquare size={10} />
+                <HiPencilSquare size={14} />
               </Link>
             </div>
-            <div>
-              <span className="mb-2 inline-block rounded bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-primary-800 dark:bg-primary-900 dark:text-primary-300">
+
+            <div className="flex-1">
+              <p className="text-xs uppercase font-medium text-blue-500 mb-2">
                 Your Name
-              </span>
-              <div className=" flex gap-3 items-center">
-                <h2 className="flex items-center text-xl font-bold leading-none text-gray-900 dark:text-white sm:text-2xl">
+              </p>
+              <div className="flex items-center gap-3">
+                <h2 className="text-2xl font-semibold text-gray-800">
                   {name}
                 </h2>
                 <Link
                   to="user-change-name"
-                  className=" size-6 flex justify-center items-center rounded-full bg-blue-600 text-white hover:bg-blue-200"
+                  className="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 transition"
                 >
-                  <HiPencilSquare size={10} />
+                  <HiPencilSquare size={14} />
                 </Link>
               </div>
             </div>
           </div>
-          <dl>
-            <dt className="font-semibold text-gray-900 dark:text-white">
-              Email Address
-            </dt>
-            <dd className="text-gray-500 dark:text-gray-400">{email}</dd>
-          </dl>
 
-          <button
-            type="button"
-            className="inline-flex gap-3 items-center justify-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 sm:w-auto"
-          >
-            <HiLockOpen /> Change Password
-          </button>
+          {/* Info Section */}
+          <div className="space-y-4">
+            <dl>
+              <dt className="text-sm font-semibold text-gray-700">
+                Email Address
+              </dt>
+              <dd className="text-gray-500">{email}</dd>
+            </dl>
+          </div>
+
+          {/* Action Button */}
+          <div className="pt-4 border-t">
+            <Link to="user-change-password" 
+              type="button"
+              className="w-full sm:w-auto inline-flex gap-2 items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition"
+            >
+              <HiLockOpen className="text-lg" />
+              Change Password
+            </Link>
+          </div>
         </div>
       </Container>
     </section>

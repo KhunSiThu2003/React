@@ -179,7 +179,7 @@ const VoucherInfo = () => {
                 <input
                   type="date"
                   defaultValue={new Date().toISOString().slice(0, 10)}
-                  // defaultValue={"2022-01-01"}
+
                   {...register("sale_date", {
                     required: true,
                   })}

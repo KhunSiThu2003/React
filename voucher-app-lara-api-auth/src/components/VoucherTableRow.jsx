@@ -11,7 +11,6 @@ const VoucherTableRow = ({
   },
   index,
 }) => {
-  //   console.log(record);
 
   const { removeRecord, changeQuantity } = useRecordStore();
 

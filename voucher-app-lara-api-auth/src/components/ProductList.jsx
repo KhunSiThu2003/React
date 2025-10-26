@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import { HiSearch } from "react-icons/hi";
 import {
-  HiMiniTrash,
-  HiOutlinePencil,
-  HiOutlineTrash,
   HiPlus,
-  HiTrash,
 } from "react-icons/hi2";
 import useSWR from "swr";
 import ProductListSkeletonLoader from "./ProductListSkeletonLoader";
@@ -17,7 +13,6 @@ import Pagination from "./Pagination";
 import useCookie from "react-use-cookie";
 
 const ProductList = () => {
-  // const [search, setSearch] = useState("");
 
   const [token] = useCookie("my_token");
 

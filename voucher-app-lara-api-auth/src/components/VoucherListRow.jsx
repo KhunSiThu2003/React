@@ -1,27 +1,23 @@
 import React, { useState } from "react";
 
 import {
-  HiComputerDesktop,
-  HiMiniTrash,
-  HiOutlineArrowLongLeft,
   HiOutlineArrowLongRight,
-  HiOutlinePencil,
   HiOutlineTrash,
-  HiPlus,
-  HiTrash,
 } from "react-icons/hi2";
 import ShowDate from "./ShowDate";
 import { useSWRConfig } from "swr";
-
 import { bouncy } from "ldrs";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import useCookie from "react-use-cookie";
 
 bouncy.register();
+
 const VoucherListRow = ({
   voucher: { id, voucher_id, customer_name, customer_email, sale_date },
 }) => {
-  // console.log(id);
+
+    const [token] = useCookie("my_token");
 
   const { mutate } = useSWRConfig();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -31,6 +27,9 @@ const VoucherListRow = ({
 
     await fetch(import.meta.env.VITE_API_URL + `/vouchers/${id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     toast.success("Voucher deleted successfully");
     mutate(import.meta.env.VITE_API_URL + `/vouchers`);

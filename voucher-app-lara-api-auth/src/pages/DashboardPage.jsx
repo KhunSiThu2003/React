@@ -6,10 +6,7 @@ import {
   HiComputerDesktop,
   HiDocumentDuplicate,
   HiUserCircle,
-  HiChartBar,
-  HiArrowTrendingUp,
   HiClock,
-  HiCheckCircle,
 } from "react-icons/hi2";
 import Logout from "../components/Logout";
 

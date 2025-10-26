@@ -5,16 +5,13 @@ import { CgLaptop } from "react-icons/cg";
 import useUserStore from "../stores/useUserStore";
 
 const Header = () => {
-  // const [userCookie] = useCookie("user");
-
-  // const { name, email, profile_image } = JSON.parse(userCookie);
 
   const {
     user: { name, email, profile_image },
   } = useUserStore();
 
   return (
-    <header className="py-4 shadow-sm">
+    <header>
       <Container>
         <div className=" flex justify-between items-center">
           <div className="">
