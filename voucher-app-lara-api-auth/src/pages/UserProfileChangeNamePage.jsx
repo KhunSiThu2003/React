@@ -1,6 +1,6 @@
 import useCookie from "react-use-cookie";
 import Container from "../components/Container";
-import Breadcrumb from "../components/BreadCrumb";
+import Breadcrumb from "../components/Breadcrumb";
 import {
   HiEnvelope,
   HiLockOpen,

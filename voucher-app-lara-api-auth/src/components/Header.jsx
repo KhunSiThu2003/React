@@ -14,7 +14,7 @@ const Header = () => {
   } = useUserStore();
 
   return (
-    <header className="py-4 shadow-sm mb-6">
+    <header className="py-4 shadow-sm">
       <Container>
         <div className=" flex justify-between items-center">
           <div className="">
