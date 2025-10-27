@@ -37,7 +37,6 @@ const VoucherCard = () => {
   };
 
   const handlePdf = () => {
-    console.log("export pdf");
     const element = document.getElementById("printArea");
 
     const opt = {
@@ -53,7 +52,6 @@ const VoucherCard = () => {
 
   if (isLoading) return <p>Loading...</p>;
 
-  console.log(data);
 
   return (
     <div className=" flex gap-5">

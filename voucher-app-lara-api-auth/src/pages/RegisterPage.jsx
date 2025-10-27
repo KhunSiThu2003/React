@@ -15,7 +15,7 @@ const RegisterPage = () => {
   } = useForm();
 
   const handleRegister = async (data) => {
-    console.log(data);
+
 
     const res = await fetch(import.meta.env.VITE_API_URL + "/register", {
       method: "POST",

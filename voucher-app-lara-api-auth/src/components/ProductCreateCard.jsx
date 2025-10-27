@@ -25,7 +25,6 @@ const ProductCreateCard = () => {
   const navigate = useNavigate();
 
   const handleCreateProduct = async (data) => {
-    // console.log(data);
     setIsSending(true);
 
     await fetch(import.meta.env.VITE_API_URL + "/products", {

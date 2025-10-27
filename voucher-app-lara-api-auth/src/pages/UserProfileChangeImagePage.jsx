@@ -27,7 +27,6 @@ const UserProfileChangeImagePage = () => {
   const fileInputRef = useRef(null);
 
   const handleUpdateImage = async (event) => {
-    console.log(event.target.files[0]);
     const formData = new FormData();
     formData.append("profile_image", event.target.files[0]);
 
@@ -58,7 +57,6 @@ const UserProfileChangeImagePage = () => {
   };
 
   const handleImageUploader = () => {
-    console.log(fileInputRef.current);
     fileInputRef.current.click();
   };
 

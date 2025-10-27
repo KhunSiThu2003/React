@@ -31,7 +31,6 @@ function LoginPage() {
 
     if (res.status === 200) {
       toast.success("Login Successfully");
-      console.log(json);
       setToken(json.token);
       setUserCookie(JSON.stringify(json.user));
       navigate("/dashboard");

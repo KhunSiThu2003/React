@@ -1,23 +1,23 @@
 import React, { useState } from "react";
 import { HiSearch } from "react-icons/hi";
-import {
-  HiPlus,
-} from "react-icons/hi2";
+import { HiPlus, HiChevronUp, HiChevronDown } from "react-icons/hi2";
 import useSWR from "swr";
 import ProductListSkeletonLoader from "./ProductListSkeletonLoader";
 import ProductListEmptyStage from "./ProductListEmptyStage";
 import ProductRow from "./ProductRow";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { debounce } from "lodash";
 import Pagination from "./Pagination";
 import useCookie from "react-use-cookie";
 
 const ProductList = () => {
+  const location = useLocation();
+  const [params, setParams] = useSearchParams();
 
   const [token] = useCookie("my_token");
 
   const [fetchUrl, setFetchUrl] = useState(
-    import.meta.env.VITE_API_URL + "/products"
+    import.meta.env.VITE_API_URL + "/products" + location.search
   );
 
   const fetcher = (url) =>
@@ -30,15 +30,37 @@ const ProductList = () => {
   const { data, isLoading, error } = useSWR(fetchUrl, fetcher);
 
   const handleSearchInput = debounce((e) => {
-    console.log(e.target.value);
-    // setSearch(e.target.value);
-    setFetchUrl(`${import.meta.env.VITE_API_URL}/products?q=${e.target.value}`);
+    if (e.target.value) {
+      setParams({ q: e.target.value });
+      setFetchUrl(
+        `${import.meta.env.VITE_API_URL}/products?q=${e.target.value}`
+      );
+    } else {
+      setParams({});
+      setFetchUrl(`${import.meta.env.VITE_API_URL}/products`);
+    }
   }, 500);
 
-  const updateFetchUrl = (url) => {
-    setFetchUrl(url);
+  const handleSort = (sort, direction) => {
+    updateFetchUrl(
+      `${
+        import.meta.env.VITE_API_URL
+      }/products?sort_by=${sort}&sort_direction=${direction}&limit=5&page=1`
+    );
   };
 
+  const updateFetchUrl = (url) => {
+    const currentURL = new URL(url);
+    const searchURL = new URLSearchParams(currentURL.search);
+
+    const paramObject = Object.fromEntries(searchURL);
+    setParams(paramObject);
+
+    // Force HTTPS (to avoid CORS redirect)
+    let secureUrl = url.replace("http://", "https://");
+
+    setFetchUrl(secureUrl);
+  };
 
   return (
     <div>
@@ -52,7 +74,6 @@ const ProductList = () => {
               type="text"
               className="bg-gray-50 border border-gray-300 text-stone-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Search Product"
-              // value={search}
               onChange={handleSearchInput}
             />
           </div>
@@ -71,16 +92,60 @@ const ProductList = () => {
         <table className="w-full text-sm text-left rtl:text-right text-stone-500 dark:text-stone-400">
           <thead className="text-xs text-stone-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-stone-400">
             <tr>
-              <th scope="col" className="px-6 py-3">
-                #
+              <th
+                scope="col"
+                className="px-6 py-3 text-center text-sm font-semibold text-gray-700 dark:text-gray-300"
+              >
+                <div className="flex items-center space-y-1">
+                  <div className="flex flex-col items-center">
+                    <button
+                      onClick={() => handleSort("id", "desc")}
+                      className="hover:text-blue-600 transition"
+                    >
+                      <HiChevronUp className="w-4 h-4 text-gray-400 hover:text-blue-600" />
+                    </button>
+                    <button
+                      onClick={() => handleSort("id", "asc")}
+                      className="hover:text-blue-600 transition"
+                    >
+                      <HiChevronDown className="w-4 h-4 text-gray-400 hover:text-blue-600" />
+                    </button>
+                  </div>
+                  <span className="text-gray-900 ml-2 dark:text-gray-200 font-medium">
+                    #
+                  </span>
+                </div>
               </th>
+
               <th scope="col" className="px-6 py-3">
                 Product name
               </th>
 
-              <th scope="col" className="px-6 py-3 text-end">
-                Price
+              <th
+                scope="col"
+                className="px-6 py-3 text-center text-sm font-semibold text-gray-700 dark:text-gray-300"
+              >
+                <div className="flex items-center space-y-1">
+                  <div className="flex flex-col items-center">
+                    <button
+                      onClick={() => handleSort("price", "desc")}
+                      className="hover:text-blue-600 transition"
+                    >
+                      <HiChevronUp className="w-4 h-4 text-gray-400 hover:text-blue-600" />
+                    </button>
+                    <button
+                      onClick={() => handleSort("price", "asc")}
+                      className="hover:text-blue-600 transition"
+                    >
+                      <HiChevronDown className="w-4 h-4 text-gray-400 hover:text-blue-600" />
+                    </button>
+                  </div>
+                  <span className="text-gray-900 ml-2 dark:text-gray-200 font-medium">
+                    Price
+                  </span>
+                </div>
               </th>
+
               <th scope="col" className="px-6 py-3 text-end">
                 Created At
               </th>
